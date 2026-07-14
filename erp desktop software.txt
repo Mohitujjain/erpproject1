@@ -1,0 +1,83 @@
+Act as an expert Full-Stack Developer and UI/UX Designer. Create a comprehensive, single-file Enterprise Resource Planning (ERP) system in HTML, CSS, and JavaScript. The design must strictly mimic a native desktop software application (like Microsoft Office, VS Code, or SAP) rather than a typical web app.
+
+Use the following tech stack via CDN:
+
+Tailwind is NOT needed; use pure CSS in a <style> tag.
+FontAwesome 6.4.0 for icons.
+Chart.js for graphs.
+Firebase v9 Modular SDK (Realtime Database ONLY, NOT Firestore) for the backend.
+1. Firebase Configuration
+Initialize Firebase Realtime Database immediately with these exact credentials. Note the inclusion of databaseURL:
+
+javascript
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, get, set, update, remove, push, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  databaseURL: "YOUR_DATABASE_URL", // Required for Realtime Database
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+2. Realtime Database Data Wrappers
+Since Realtime Database stores data as JSON trees, create helper functions to handle them:
+
+fetchCollection(colName): Uses get(ref(db, colName)), checks snap.exists(), and returns an array of objects mapping the JSON keys to an id property.
+fetchOptions(colName, labelCol): Returns { value: id, label: property } for dropdowns.
+nextCode(colName, codeField, prefix, pad): Fetches a collection, maps through documents to find the highest numeric suffix in codeField, and returns the next sequential string (e.g., SO-001).
+CRUD wrappers: Use push(ref(db, colName), data) for adds, update(ref(db, colName + '/' + id), data) for edits, and remove(ref(db, colName + '/' + id)) for deletes.
+3. Desktop Software UI/UX Theme
+Window Titlebar: A dark top bar (#1e1e1e, 32px height) with "Acme ERP Pro" on the left, and window controls (Minimize, Maximize, Close) on the right.
+App Shell: A dark VS Code-style sidebar (#252526), a light grey desktop background (#f3f3f3), and a top ribbon bar.
+Typography: Use 'Segoe UI', 'Inter', system-ui, sans-serif for general text (13px base). Use 'Consolas', monospace for all numbers, prices, IDs, and dates.
+Styling: Flat design. Sharp corners (border-radius 2px-3px max). No gradients on large areas.
+Status Bar: A blue bottom bar (#007acc, 24px height) showing "Connected", the current active route, dynamic record counts, and "Realtime DB Cloud".
+Top Ribbon: Contains dynamic breadcrumbs (Home > Module), a search bar, live clock, notifications, and user profile.
+4. Dashboard KPI Cards (Crucial Design)
+The dashboard KPI cards must be highly attractive and colorful:
+
+Crisp white background with subtle shadow and 6px border radius.
+Two-column internal layout: A vibrant, colorful gradient icon box on the left (54x54px, 10px radius) and text on the right.
+The text must include a large numeric value, a muted uppercase label, and a colorful pill-shaped trend tag (e.g., "0 Pending", "HRM", "Paid Invoices").
+Use specific gradient colors per card: Blue (#0078D4 to #005A9E), Orange (#D83B01 to #A62C00), Green (#107C10 to #0B5A0B), Purple, Cyan, Red, Teal, Indigo.
+5. Data Tables (Desktop Grid Style)
+Dense grids with sticky headers (#f0f0f0).
+Alternating row colors (#ffffff and #fafafa).
+Hover state highlights rows in light blue (#e7f0fa).
+Desktop-style filter toolbar above the table with sharp input borders and small blue buttons.
+All money and stock columns must use the monospace font.
+6. Modals & Forms
+Modals must look like desktop dialog boxes with a light grey header bar.
+Forms inside modals must use a 2-column CSS Grid layout. Textareas should span full width.
+Inputs should have sharp 2px radius, uppercase labels, and a blue focus ring.
+7. Modules to Build (Full CRUD)
+Build hash-routed pages for the following modules. Relational foreign keys (e.g., customer_id, employee_id) must be resolved in the frontend to display names instead of IDs.
+
+Dashboard: 8 colorful KPI cards, 2 Chart.js graphs (Revenue vs Expenses Bar, Sales Doughnut), and 3 info cards (Recent Orders, Low Stock, Upcoming Deadlines).
+User Management: Table with avatars, role badges, and links to employees.
+HRM:
+Employees: Summary strip cards + dense table.
+Payroll: Summary cards + table with payslip view modal and a "Run Payroll" logic button that iterates active employees and pushes payroll records.
+Inventory:
+Products: Table with calculated margin and colorful low-stock badges.
+Stock Adjustments: Summary cards + table showing Qty Before/Change/After. Adding an adjustment must also update the product's stock level in the DB.
+Sales:
+Customers: Table with relational counts (Orders, Invoices).
+Sales Orders: Summary cards + table with an action button to auto-generate Invoices (pushes a new record to the invoices collection).
+Accounting:
+Invoices: Summary cards + table with balance calculation and "Mark Paid" button.
+Expenses: Summary cards + 2 Chart.js graphs (Category Doughnut, Trend Line) + table with approve button.
+CRM (Leads): A stepped pipeline visual (New -> Contacted -> Won) + summary cards + table.
+Projects: Summary cards + a 3-column Kanban Board (In Progress, Completed, On Hold) + a dense table with progress bars.
+Reports: 3 large metric cards + 2 Chart.js graphs + a module performance overview with progress bars.
+8. Logic & Helpers
+Implement a login screen (admin / admin123) that stores a session flag.
+Create a wireFilters function to handle live table filtering based on the toolbar inputs.
+Create a toast notification system for successful saves/errors instead of using alert().
+Add an "Export to CSV" button on major tables.
+Generate the complete, working HTML file containing all CSS and JavaScript. Ensure the code is robust, handles empty Realtime Database nodes gracefully, and is ready to run immediately.Please write the entire code under 1000 lines

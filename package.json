@@ -1,0 +1,23 @@
+{
+  "name": "vortexx-erp-system",
+  "version": "1.0.0",
+  "description": "Desktop ERP Management System",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.vortexx.erp",
+    "productName": "Vorexx ERP System",
+    "win": {
+      "target": "nsis"
+    }
+  },
+  "author": "vortexx",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  }
+}

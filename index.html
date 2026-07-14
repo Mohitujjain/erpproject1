@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Acme ERP Pro</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--blue:#0078d4;--dark:#1e1e1e;--side:#252526;--line:#d0d0d0;--bg:#f3f3f3;--text:#222}
+*{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;font:13px "Segoe UI",Inter,system-ui,sans-serif;color:var(--text);background:var(--bg)}
+button,input,select,textarea{font:inherit}.mono,.num,td[data-n]{font-family:Consolas,monospace}
+button{border:1px solid #999;border-radius:2px;background:#fafafa;padding:6px 10px;cursor:pointer}
+button:hover{background:#e7f0fa}.primary{color:#fff;background:#006fc9;border-color:#005a9e}.primary:hover{background:#005ea9}
+.danger{color:#fff;background:#c42b1c;border-color:#9d2117}.success{color:#fff;background:#107c10;border-color:#0b5a0b}
+#login{height:100%;display:grid;place-items:center;background:#202124}
+.login-box{width:360px;background:#f5f5f5;border:1px solid #555;box-shadow:0 16px 45px #0008}
+.dialog-head{height:38px;padding:10px 14px;background:#e9e9e9;border-bottom:1px solid #bbb;font-weight:600}
+.login-body{padding:25px}.login-body input{width:100%;margin:5px 0 14px;padding:9px;border:1px solid #888;border-radius:2px}
+.login-body button{width:100%;padding:9px}.hint{margin-top:12px;color:#666;text-align:center}
+#app{height:100%;display:none;grid-template-rows:32px 48px 1fr 24px;grid-template-columns:210px 1fr}
+.titlebar{grid-column:1/3;background:var(--dark);color:#ddd;display:flex;align-items:center;justify-content:space-between;padding-left:12px;font-size:12px}
+.window-controls{height:100%;display:flex}.window-controls span{width:46px;display:grid;place-items:center}.window-controls span:hover{background:#444}.window-controls .close:hover{background:#c42b1c}
+.ribbon{grid-column:2;padding:6px 12px;background:#fff;border-bottom:1px solid #ccc;display:flex;align-items:center;gap:12px}
+.crumb{font-weight:600;white-space:nowrap}.search{margin-left:auto;width:min(330px,30vw);position:relative}
+.search input{width:100%;padding:7px 28px 7px 9px;border:1px solid #aaa;border-radius:2px}.search i{position:absolute;right:9px;top:9px;color:#777}
+.clock{font-family:Consolas,monospace}.profile{display:flex;align-items:center;gap:7px}.avatar{width:26px;height:26px;border-radius:50%;background:#5c2d91;color:#fff;display:grid;place-items:center;font-weight:700}
+.sidebar{grid-row:2/4;background:var(--side);color:#ccc;overflow:auto;padding:8px 0}
+.brand{padding:7px 14px 12px;color:#fff;font-weight:600}.nav-title{padding:11px 14px 4px;font-size:10px;color:#888;text-transform:uppercase}
+.nav a{display:flex;align-items:center;gap:10px;color:#ccc;text-decoration:none;padding:8px 14px;border-left:3px solid transparent}
+.nav a:hover{background:#2f2f30;color:#fff}.nav a.active{background:#37373d;color:#fff;border-left-color:#3794ff}.nav i{width:16px;text-align:center}
+main{grid-column:2;overflow:auto;padding:12px}.status{grid-column:1/3;background:#007acc;color:#fff;display:flex;align-items:center;gap:22px;padding:0 10px;font-size:12px}.status span:last-child{margin-left:auto}
+.page-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.page-head h1{font-size:20px;margin:0;font-weight:600}.actions{display:flex;gap:5px;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(190px,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 2px 7px #00000012;padding:13px;display:grid;grid-template-columns:54px 1fr;gap:12px;align-items:center}
+.kpi-icon{width:54px;height:54px;border-radius:10px;color:white;display:grid;place-items:center;font-size:22px}
+.kpi strong{font:700 22px Consolas,monospace;display:block}.kpi label{font-size:10px;color:#777;text-transform:uppercase;font-weight:700}.pill,.badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600;background:#e8f2fb;color:#0067b8;margin-top:4px}
+.g0{background:linear-gradient(135deg,#0078d4,#005a9e)}.g1{background:linear-gradient(135deg,#d83b01,#a62c00)}.g2{background:linear-gradient(135deg,#107c10,#0b5a0b)}.g3{background:linear-gradient(135deg,#8764b8,#5c2d91)}.g4{background:linear-gradient(135deg,#00b7c3,#007b83)}.g5{background:linear-gradient(135deg,#e81123,#a80000)}.g6{background:linear-gradient(135deg,#008272,#005a50)}.g7{background:linear-gradient(135deg,#4f6bed,#27348b)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.card{background:#fff;border:1px solid #d5d5d5;box-shadow:0 1px 3px #0001;margin-bottom:12px}.card-head{padding:9px 11px;background:#f0f0f0;border-bottom:1px solid #d2d2d2;font-weight:600}.card-body{padding:11px}.chart{height:260px}
+.toolbar{display:flex;gap:6px;padding:7px;background:#e9e9e9;border:1px solid #ccc;border-bottom:0}.toolbar input,.toolbar select{padding:6px;border:1px solid #999;border-radius:2px;min-width:140px}
+.table-wrap{background:#fff;border:1px solid #c8c8c8;overflow:auto;max-height:calc(100vh - 180px)}
+table{width:100%;border-collapse:collapse;white-space:nowrap}th{position:sticky;top:0;z-index:1;background:#f0f0f0;text-align:left;font-size:11px;text-transform:uppercase;padding:7px;border-bottom:1px solid #bbb;border-right:1px solid #ddd}
+td{padding:6px 7px;border-bottom:1px solid #e5e5e5;border-right:1px solid #eee}tbody tr:nth-child(even){background:#fafafa}tbody tr:hover{background:#e7f0fa}
+.icon-btn{padding:4px 7px;border-color:#bbb}.money,.date,.code{font-family:Consolas,monospace}.low{background:#fde7e9;color:#a80000}.ok{background:#dff6dd;color:#107c10}.warn{background:#fff4ce;color:#8a5700}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}.summary div{background:#fff;border:1px solid #d0d0d0;border-left:4px solid var(--blue);padding:10px}.summary b{display:block;font:700 19px Consolas,monospace}.summary small{color:#666;text-transform:uppercase}
+.modal{position:fixed;inset:0;background:#0006;display:none;place-items:center;z-index:20}.modal.show{display:grid}.modal-box{width:min(760px,94vw);max-height:90vh;background:#f7f7f7;border:1px solid #666;box-shadow:0 18px 60px #0008;overflow:auto}.modal-title{display:flex;justify-content:space-between}.modal-title button{border:0;padding:0 5px;background:transparent}
+.form-grid{padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:11px}.field label{display:block;font-size:10px;font-weight:700;color:#555;margin-bottom:3px;text-transform:uppercase}.field input,.field select,.field textarea{width:100%;padding:7px;border:1px solid #999;border-radius:2px;background:#fff}.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid #75b6e7;border-color:#0078d4}.full{grid-column:1/3}.modal-foot{display:flex;justify-content:flex-end;gap:7px;padding:9px 15px;border-top:1px solid #ccc;background:#eee}
+.toast-box{position:fixed;right:14px;bottom:35px;z-index:50}.toast{background:#252525;color:#fff;padding:10px 15px;margin-top:7px;border-left:4px solid #35a854;box-shadow:0 3px 12px #0005;animation:in .2s}.toast.err{border-color:#e81123}
+@keyframes in{from{transform:translateX(30px);opacity:0}}.progress{width:130px;height:9px;background:#ddd}.progress span{display:block;height:100%;background:#0078d4}
+.pipeline{display:flex;margin-bottom:12px}.step{flex:1;padding:15px;background:#fff;border:1px solid #ccc;text-align:center;font-weight:600}.step:not(:last-child):after{content:"›";float:right;font-size:20px}.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}.lane{background:#e7e7e7;border:1px solid #ccc;min-height:150px}.lane h3{margin:0;padding:8px;background:#d8d8d8;font-size:12px}.ticket{margin:7px;padding:9px;background:#fff;border-left:4px solid #0078d4;box-shadow:0 1px 2px #0002}
+.info-list{list-style:none;margin:0;padding:0}.info-list li{display:flex;justify-content:space-between;padding:7px 2px;border-bottom:1px solid #eee}
+.empty{text-align:center;color:#777;padding:25px}
+@media(max-width:1050px){.kpis{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<section id="login">
+  <div class="login-box">
+    <div class="dialog-head"><i class="fa-solid fa-building"></i> Acme ERP Pro — Sign In</div>
+    <form class="login-body" id="loginForm">
+      <label>USERNAME</label><input id="username" autocomplete="username" required>
+      <label>PASSWORD</label><input id="password" type="password" autocomplete="current-password" required>
+      <button class="primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button>
+      <div class="hint">Demo credentials: admin / admin123</div>
+    </form>
+  </div>
+</section>
+
+<div id="app">
+  <header class="titlebar"><span><i class="fa-solid fa-cubes"></i> Acme ERP Pro</span><div class="window-controls"><span>─</span><span>□</span><span class="close">×</span></div></header>
+  <aside class="sidebar"><div class="brand">ACME ENTERPRISE</div><nav class="nav" id="nav"></nav></aside>
+  <header class="ribbon">
+    <span class="crumb" id="crumb">Home › Dashboard</span>
+    <div class="search"><input id="globalSearch" placeholder="Search current module..."><i class="fa-solid fa-magnifying-glass"></i></div>
+    <span class="clock" id="clock"></span><i class="fa-regular fa-bell"></i>
+    <span class="profile"><span class="avatar">AD</span> Administrator</span>
+    <button onclick="logout()" title="Sign out"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+  </header>
+  <main id="view"></main>
+  <footer class="status"><span><i class="fa-solid fa-circle-check"></i> <b id="connection">Connected</b></span><span id="routeStatus">Dashboard</span><span id="recordCount">0 records</span><span>Realtime DB Cloud</span></footer>
+</div>
+
+<div class="modal" id="modal"><div class="modal-box">
+  <div class="dialog-head modal-title"><span id="modalTitle">Record</span><button onclick="closeModal()">×</button></div>
+  <form id="recordForm"><div class="form-grid" id="formFields"></div><div class="modal-foot"><button type="button" onclick="closeModal()">Cancel</button><button class="primary">Save</button></div></form>
+</div></div>
+<div class="toast-box" id="toasts"></div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import{getDatabase,ref,get,set,update,remove,push,child}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyOFcSR2vzEd-yqlsqxPVxFSYdESCQorE",
+  authDomain: "erpproject1-c8d3e.firebaseapp.com",
+  databaseURL: "https://erpproject1-c8d3e-default-rtdb.firebaseio.com",
+  projectId: "erpproject1-c8d3e",
+  storageBucket: "erpproject1-c8d3e.firebasestorage.app",
+  messagingSenderId: "371590636292",
+  appId: "1:371590636292:web:61357b987e364cf8aba651"
+};
+const app=initializeApp(firebaseConfig),db=getDatabase(app);
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const money=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(+n||0);
+const date=v=>v?new Date(v).toLocaleDateString():"—";
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const title=s=>s.replaceAll("_"," ").replace(/\b\w/g,c=>c.toUpperCase());
+let cache={},charts=[],current="dashboard",editId=null;
+
+async function fetchCollection(colName){
+ const snap=await get(ref(db,colName));
+ return snap.exists()?Object.entries(snap.val()).map(([id,v])=>({id,...v})):[];
+}
+async function fetchOptions(colName,labelCol){
+ return(await fetchCollection(colName)).map(x=>({value:x.id,label:x[labelCol]||x.id}));
+}
+async function nextCode(colName,codeField,prefix,pad=3){
+ const nums=(await fetchCollection(colName)).map(x=>parseInt(String(x[codeField]||"").match(/\d+$/)?.[0]||0));
+ return prefix+String(Math.max(0,...nums)+1).padStart(pad,"0");
+}
+const addRecord=(col,data)=>push(ref(db,col),data);
+const editRecord=(col,id,data)=>update(ref(db,`${col}/${id}`),data);
+const deleteRecord=(col,id)=>remove(ref(db,`${col}/${id}`));
+
+const modules={
+ users:{group:"Administration",icon:"fa-users",label:"User Management",fields:{
+  name:["text",1],email:["email",1],role:["select",1,["Administrator","Manager","Accountant","HR","Sales"]],employee_id:["relation",0,"employees","name"],status:["select",1,["Active","Disabled"]]}},
+ employees:{group:"HRM",icon:"fa-id-badge",label:"Employees",code:["employee_code","EMP-"],fields:{
+  employee_code:["text",1],name:["text",1],email:["email",1],department:["select",1,["Management","Finance","HR","Sales","IT","Operations"]],position:["text",1],salary:["number",1],status:["select",1,["Active","Inactive"]],join_date:["date",1]}},
+ payroll:{group:"HRM",icon:"fa-money-check-dollar",label:"Payroll",fields:{
+  employee_id:["relation",1,"employees","name"],period:["month",1],basic:["number",1],bonus:["number",0],deductions:["number",0],net:["number",1],status:["select",1,["Pending","Paid"]]}},
+ products:{group:"Inventory",icon:"fa-boxes-stacked",label:"Products",code:["sku","SKU-"],fields:{
+  sku:["text",1],name:["text",1],category:["text",1],cost:["number",1],price:["number",1],stock:["number",1],reorder_level:["number",1],status:["select",1,["Active","Discontinued"]]}},
+ adjustments:{group:"Inventory",icon:"fa-box-open",label:"Stock Adjustments",fields:{
+  product_id:["relation",1,"products","name"],type:["select",1,["Increase","Decrease"]],quantity:["number",1],reason:["text",1],date:["date",1]}},
+ customers:{group:"Sales",icon:"fa-address-book",label:"Customers",code:["customer_code","CUS-"],fields:{
+  customer_code:["text",1],name:["text",1],email:["email",1],phone:["text",0],company:["text",0],status:["select",1,["Active","Inactive"]]}},
+ orders:{group:"Sales",icon:"fa-cart-shopping",label:"Sales Orders",code:["order_code","SO-"],fields:{
+  order_code:["text",1],customer_id:["relation",1,"customers","name"],date:["date",1],amount:["number",1],status:["select",1,["Pending","Confirmed","Shipped","Completed","Cancelled"]],notes:["textarea",0]}},
+ invoices:{group:"Accounting",icon:"fa-file-invoice-dollar",label:"Invoices",code:["invoice_code","INV-"],fields:{
+  invoice_code:["text",1],customer_id:["relation",1,"customers","name"],order_id:["relation",0,"orders","order_code"],date:["date",1],due_date:["date",1],amount:["number",1],paid:["number",0],status:["select",1,["Unpaid","Partial","Paid","Overdue"]]}},
+ expenses:{group:"Accounting",icon:"fa-receipt",label:"Expenses",code:["expense_code","EXP-"],fields:{
+  expense_code:["text",1],category:["select",1,["Office","Travel","Utilities","Payroll","Marketing","Other"]],vendor:["text",1],date:["date",1],amount:["number",1],status:["select",1,["Pending","Approved","Rejected"]],description:["textarea",0]}},
+ leads:{group:"CRM",icon:"fa-filter-circle-dollar",label:"Leads",fields:{
+  name:["text",1],company:["text",0],email:["email",1],phone:["text",0],value:["number",1],stage:["select",1,["New","Contacted","Won","Lost"]],owner:["text",0]}},
+ projects:{group:"Operations",icon:"fa-diagram-project",label:"Projects",code:["project_code","PRJ-"],fields:{
+  project_code:["text",1],name:["text",1],customer_id:["relation",0,"customers","name"],manager:["text",1],start_date:["date",1],deadline:["date",1],budget:["number",1],progress:["number",1],status:["select",1,["In Progress","Completed","On Hold"]]}},
+ reports:{group:"Analytics",icon:"fa-chart-line",label:"Reports",fields:{}}
+};
+const navItems=[["dashboard","Home","fa-gauge"],...Object.entries(modules).map(([k,m])=>[k,m.group,m.icon,m.label])];
+function buildNav(){
+ let group="";
+ $("#nav").innerHTML=navItems.map(([k,g,i,l])=>{
+  let h=g!==group?`<div class="nav-title">${group=g}</div>`:"";
+  return h+`<a href="#${k}" data-route="${k}"><i class="fa-solid ${i}"></i>${l||title(k)}</a>`;
+ }).join("");
+}
+
+function toast(msg,error=false){
+ const e=document.createElement("div");e.className="toast"+(error?" err":"");e.textContent=msg;$("#toasts").append(e);setTimeout(()=>e.remove(),3200);
+}
+function setConnection(ok){$("#connection").textContent=ok?"Connected":"Configuration required"}
+async function loadAll(){
+ const names=Object.keys(modules).filter(x=>x!=="reports");
+ const settled=await Promise.allSettled(names.map(fetchCollection));
+ names.forEach((n,i)=>cache[n]=settled[i].status==="fulfilled"?settled[i].value:[]);
+ const ok=settled.some(x=>x.status==="fulfilled");setConnection(ok);
+ if(!ok)toast("Configure Firebase credentials to enable cloud data.",true);
+}
+function resolve(field,value){
+ const f=modules[current]?.fields[field];
+ if(f?.[0]==="relation")return cache[f[2]]?.find(x=>x.id===value)?.[f[3]]||"—";
+ return value??"—";
+}
+function kpi(icon,value,label,tag,i=0){return`<div class="kpi"><div class="kpi-icon g${i%8}"><i class="fa-solid ${icon}"></i></div><div><strong>${value}</strong><label>${label}</label><br><span class="pill">${tag}</span></div></div>`}
+function header(name,buttons=""){return`<div class="page-head"><h1>${name}</h1><div class="actions">${buttons}</div></div>`}
+function toolbar(add=true){return`<div class="toolbar"><input class="filter" placeholder="Filter records..."><button class="primary" onclick="window.applyFilter()"><i class="fa-solid fa-filter"></i> Filter</button><button onclick="window.exportCSV()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>${add?`<button class="primary" onclick="window.openRecord()"><i class="fa-solid fa-plus"></i> New</button>`:""}</div>`}
+
+function dashboard(){
+ const orders=cache.orders||[],products=cache.products||[],invoices=cache.invoices||[],employees=cache.employees||[];
+ const revenue=invoices.reduce((s,x)=>s+(+x.paid||0),0),expenses=(cache.expenses||[]).reduce((s,x)=>s+(+x.amount||0),0);
+ $("#view").innerHTML=header("Executive Dashboard")+`<div class="kpis">
+ ${kpi("fa-dollar-sign",money(revenue),"Total Revenue","Paid invoices",0)}
+ ${kpi("fa-cart-shopping",orders.length,"Sales Orders",`${orders.filter(x=>x.status==="Pending").length} Pending`,1)}
+ ${kpi("fa-box",products.length,"Products",`${products.filter(x=>+x.stock<=+x.reorder_level).length} Low stock`,2)}
+ ${kpi("fa-users",employees.length,"Employees","HRM",3)}
+ ${kpi("fa-file-invoice",invoices.length,"Invoices",`${invoices.filter(x=>x.status!=="Paid").length} Open`,4)}
+ ${kpi("fa-receipt",money(expenses),"Expenses","Current total",5)}
+ ${kpi("fa-address-book",cache.customers?.length||0,"Customers","CRM",6)}
+ ${kpi("fa-diagram-project",cache.projects?.length||0,"Projects",`${cache.projects?.filter(x=>x.status==="In Progress").length||0} Active`,7)}
+ </div><div class="grid2"><div class="card"><div class="card-head">Revenue vs Expenses</div><div class="card-body chart"><canvas id="revChart"></canvas></div></div>
+ <div class="card"><div class="card-head">Sales Distribution</div><div class="card-body chart"><canvas id="salesChart"></canvas></div></div></div>
+ <div class="grid3">${infoCard("Recent Orders",orders.slice(-5).reverse().map(x=>[x.order_code,money(x.amount)]))}
+ ${infoCard("Low Stock",products.filter(x=>+x.stock<=+x.reorder_level).slice(0,5).map(x=>[x.name,x.stock]))}
+ ${infoCard("Upcoming Deadlines",(cache.projects||[]).filter(x=>x.deadline).sort((a,b)=>a.deadline.localeCompare(b.deadline)).slice(0,5).map(x=>[x.name,date(x.deadline)]))}</div>`;
+ makeChart("revChart","bar",["Revenue","Expenses"],[revenue,expenses],["#0078d4","#d83b01"]);
+ const statuses=["Pending","Confirmed","Completed","Cancelled"];
+ makeChart("salesChart","doughnut",statuses,statuses.map(s=>orders.filter(x=>x.status===s).length),["#ffb900","#0078d4","#107c10","#e81123"]);
+}
+function infoCard(name,rows){return`<div class="card"><div class="card-head">${name}</div><div class="card-body"><ul class="info-list">${rows.length?rows.map(r=>`<li><span>${esc(r[0])}</span><b class="mono">${esc(r[1])}</b></li>`).join(""):`<li class="empty">No records</li>`}</ul></div></div>`}
+function makeChart(id,type,labels,data,colors){
+ const c=document.getElementById(id);if(!c)return;
+ charts.push(new Chart(c,{type,data:{labels,datasets:[{label:"Amount",data,backgroundColor:colors,borderColor:colors,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}}));
+}
+
+function summaryFor(col,rows){
+ const total=rows.reduce((s,x)=>s+(+x.amount||+x.salary||+x.budget||0),0);
+ return`<div class="summary"><div><b>${rows.length}</b><small>Total records</small></div><div><b>${rows.filter(x=>["Active","Approved","Paid","Completed","Won"].includes(x.status||x.stage)).length}</b><small>Completed / Active</small></div><div><b>${rows.filter(x=>["Pending","In Progress","New"].includes(x.status||x.stage)).length}</b><small>Open / Pending</small></div><div><b>${money(total)}</b><small>Aggregate value</small></div></div>`;
+}
+function specialButtons(col){
+ if(col==="payroll")return`<button class="success" onclick="window.runPayroll()"><i class="fa-solid fa-play"></i> Run Payroll</button>`;
+ return"";
+}
+function renderModule(col){
+ const m=modules[col],rows=cache[col]||[],fields=Object.keys(m.fields);
+ let pre=summaryFor(col,rows),post="";
+ if(col==="leads")pre=`<div class="pipeline">${["New","Contacted","Won"].map(s=>`<div class="step">${s}<br><b class="mono">${rows.filter(x=>x.stage===s).length}</b></div>`).join("")}</div>`+pre;
+ if(col==="projects")pre+=kanban(rows);
+ if(col==="expenses")pre+=`<div class="grid2"><div class="card"><div class="card-head">Expense Categories</div><div class="card-body chart"><canvas id="catChart"></canvas></div></div><div class="card"><div class="card-head">Expense Trend</div><div class="card-body chart"><canvas id="trendChart"></canvas></div></div></div>`;
+ $("#view").innerHTML=header(m.label,specialButtons(col))+pre+toolbar()+table(col,rows,fields)+post;
+ wireFilters();
+ if(col==="expenses")expenseCharts(rows);
+}
+function table(col,rows,fields){
+ const extras=col==="products"?["margin"]:col==="adjustments"?["qty_before","change","qty_after"]:col==="customers"?["orders","invoices"]:col==="invoices"?["balance"]:[];
+ return`<div class="table-wrap"><table id="dataTable"><thead><tr>${[...fields,...extras].map(f=>`<th>${title(f)}</th>`).join("")}<th>Actions</th></tr></thead><tbody>
+ ${rows.length?rows.map(r=>`<tr>${fields.map(f=>cell(col,f,r)).join("")}${extras.map(f=>extraCell(col,f,r)).join("")}<td>${rowActions(col,r)}</td></tr>`).join(""):`<tr><td class="empty" colspan="${fields.length+extras.length+1}">No records found</td></tr>`}
+ </tbody></table></div>`;
+}
+function cell(col,f,r){
+ let v=resolve(f,r[f]),cls="";
+ if(["salary","cost","price","amount","paid","basic","bonus","deductions","net","value","budget"].includes(f)){v=money(v);cls="money"}
+ if(f.includes("date")||f==="period"){v=f==="period"?v:date(v);cls="date"}
+ if(f.includes("code")||f==="sku"){cls="code"}
+ if(["status","stage"].includes(f))return`<td><span class="badge ${["Paid","Active","Approved","Completed","Won"].includes(v)?"ok":["Pending","Partial","New","In Progress"].includes(v)?"warn":"low"}">${esc(v)}</span></td>`;
+ if(f==="progress")return`<td><div class="progress"><span style="width:${Math.min(100,+v||0)}%"></span></div> ${esc(v)}%</td>`;
+ return`<td class="${cls}">${esc(v)}</td>`;
+}
+function extraCell(col,f,r){
+ if(f==="margin")return`<td class="money">${money((+r.price||0)-(+r.cost||0))}</td>`;
+ if(f==="balance")return`<td class="money">${money((+r.amount||0)-(+r.paid||0))}</td>`;
+ if(f==="orders")return`<td class="num">${cache.orders.filter(x=>x.customer_id===r.id).length}</td>`;
+ if(f==="invoices")return`<td class="num">${cache.invoices.filter(x=>x.customer_id===r.id).length}</td>`;
+ return`<td class="num">${esc(r[f]??"—")}</td>`;
+}
+function rowActions(col,r){
+ let x=`<button class="icon-btn" onclick="window.openRecord('${r.id}')" title="Edit"><i class="fa-solid fa-pen"></i></button> `;
+ if(col==="orders"&&!r.invoice_id)x+=`<button class="icon-btn" onclick="window.generateInvoice('${r.id}')" title="Generate invoice"><i class="fa-solid fa-file-circle-plus"></i></button> `;
+ if(col==="invoices"&&r.status!=="Paid")x+=`<button class="icon-btn" onclick="window.markPaid('${r.id}')" title="Mark paid"><i class="fa-solid fa-check"></i></button> `;
+ if(col==="expenses"&&r.status==="Pending")x+=`<button class="icon-btn" onclick="window.approveExpense('${r.id}')" title="Approve"><i class="fa-solid fa-thumbs-up"></i></button> `;
+ if(col==="payroll")x+=`<button class="icon-btn" onclick="window.payslip('${r.id}')" title="Payslip"><i class="fa-solid fa-eye"></i></button> `;
+ return x+`<button class="icon-btn" onclick="window.removeRow('${r.id}')" title="Delete"><i class="fa-solid fa-trash"></i></button>`;
+}
+function kanban(rows){return`<div class="kanban">${["In Progress","Completed","On Hold"].map(s=>`<div class="lane"><h3>${s}</h3>${rows.filter(x=>x.status===s).map(x=>`<div class="ticket"><b>${esc(x.name)}</b><div class="progress"><span style="width:${+x.progress||0}%"></span></div><small>${esc(x.manager)} · ${x.progress||0}%</small></div>`).join("")}</div>`).join("")}</div>`}
+function expenseCharts(rows){
+ const cats=[...new Set(rows.map(x=>x.category))],months=[...new Set(rows.map(x=>x.date?.slice(0,7)).filter(Boolean))].sort();
+ makeChart("catChart","doughnut",cats,cats.map(c=>rows.filter(x=>x.category===c).reduce((s,x)=>s+(+x.amount||0),0)),["#0078d4","#d83b01","#107c10","#8764b8","#00b7c3","#e81123"]);
+ makeChart("trendChart","line",months,months.map(m=>rows.filter(x=>x.date?.startsWith(m)).reduce((s,x)=>s+(+x.amount||0),0)),["#0078d4"]);
+}
+function reports(){
+ const revenue=cache.invoices.reduce((s,x)=>s+(+x.paid||0),0),cost=cache.expenses.reduce((s,x)=>s+(+x.amount||0),0),profit=revenue-cost;
+ $("#view").innerHTML=header("Enterprise Reports")+`<div class="kpis">${kpi("fa-chart-line",money(revenue),"Revenue","Financial",0)}${kpi("fa-arrow-trend-down",money(cost),"Expenses","Financial",1)}${kpi("fa-sack-dollar",money(profit),"Net Profit",profit>=0?"Profitable":"Loss",2)}</div>
+ <div class="grid2"><div class="card"><div class="card-head">Financial Performance</div><div class="card-body chart"><canvas id="financeChart"></canvas></div></div><div class="card"><div class="card-head">Operational Records</div><div class="card-body chart"><canvas id="opsChart"></canvas></div></div></div>
+ <div class="card"><div class="card-head">Module Performance Overview</div><div class="card-body">${Object.entries(modules).filter(([k])=>k!=="reports").map(([k,m])=>{let n=cache[k]?.length||0;return`<p>${m.label} <b class="mono">${n}</b></p><div class="progress" style="width:100%"><span style="width:${Math.min(100,n*10)}%"></span></div>`}).join("")}</div></div>`;
+ makeChart("financeChart","bar",["Revenue","Expenses","Profit"],[revenue,cost,profit],["#0078d4","#d83b01","#107c10"]);
+ const keys=["customers","orders","products","employees","projects"];makeChart("opsChart","doughnut",keys.map(title),keys.map(k=>cache[k].length),["#0078d4","#d83b01","#107c10","#8764b8","#00b7c3"]);
+}
+
+async function openRecord(id=null){
+ editId=id;const m=modules[current],record=id?cache[current].find(x=>x.id===id):{};
+ $("#modalTitle").textContent=(id?"Edit ":"New ")+m.label.replace(/s$/,"");
+ let html="";
+ for(const [name,f] of Object.entries(m.fields)){
+  let value=record?.[name]??"";
+  if(!id&&m.code?.[0]===name)value=await nextCode(current,name,m.code[1]);
+  let control="";
+  if(f[0]==="select"){
+   control=`<select name="${name}" ${f[1]?"required":""}><option value="">Select...</option>${f[2].map(x=>`<option ${x===value?"selected":""}>${esc(x)}</option>`).join("")}</select>`;
+  }else if(f[0]==="relation"){
+   const options=await fetchOptions(f[2],f[3]);
+   control=`<select name="${name}" ${f[1]?"required":""}><option value="">Select...</option>${options.map(x=>`<option value="${x.value}" ${x.value===value?"selected":""}>${esc(x.label)}</option>`).join("")}</select>`;
+  }else if(f[0]==="textarea"){
+   control=`<textarea name="${name}" rows="3">${esc(value)}</textarea>`;
+  }else{
+   const step=f[0]==="number"?'step="0.01"':"";
+   control=`<input name="${name}" type="${f[0]}" value="${esc(value)}" ${step} ${f[1]?"required":""}>`;
+  }
+  html+=`<div class="field ${f[0]==="textarea"?"full":""}"><label>${title(name)}</label>${control}</div>`;
+ }
+ $("#formFields").innerHTML=html;
+ $("#modal").classList.add("show");
+}
+function closeModal(){
+ $("#modal").classList.remove("show");editId=null;
+}
+async function saveRecord(event){
+ event.preventDefault();
+ const data=Object.fromEntries(new FormData(event.target));
+ Object.entries(modules[current].fields).forEach(([k,f])=>{
+  if(f[0]==="number")data[k]=Number(data[k]||0);
+ });
+ try{
+  if(current==="adjustments"&&!editId){
+   const product=cache.products.find(x=>x.id===data.product_id);
+   if(!product)throw new Error("Product not found");
+   const change=data.type==="Increase"?data.quantity:-data.quantity;
+   const after=(+product.stock||0)+change;
+   if(after<0)throw new Error("Adjustment would produce negative stock");
+   data.qty_before=+product.stock||0;data.change=change;data.qty_after=after;
+   await editRecord("products",product.id,{stock:after});
+  }
+  editId?await editRecord(current,editId,data):await addRecord(current,data);
+  closeModal();toast("Record saved successfully");await refresh();
+ }catch(e){toast(e.message||"Unable to save record",true)}
+}
+async function removeRow(id){
+ if(!confirm("Delete this record permanently?"))return;
+ try{await deleteRecord(current,id);toast("Record deleted");await refresh()}
+ catch(e){toast("Unable to delete record",true)}
+}
+async function generateInvoice(id){
+ const order=cache.orders.find(x=>x.id===id);if(!order)return;
+ try{
+  const code=await nextCode("invoices","invoice_code","INV-");
+  const invoice=await addRecord("invoices",{
+   invoice_code:code,customer_id:order.customer_id,order_id:id,
+   date:new Date().toISOString().slice(0,10),
+   due_date:new Date(Date.now()+30*86400000).toISOString().slice(0,10),
+   amount:+order.amount||0,paid:0,status:"Unpaid"
+  });
+  await editRecord("orders",id,{invoice_id:invoice.key});
+  toast(`Invoice ${code} generated`);await refresh();
+ }catch(e){toast("Unable to generate invoice",true)}
+}
+async function markPaid(id){
+ const invoice=cache.invoices.find(x=>x.id===id);if(!invoice)return;
+ try{
+  await editRecord("invoices",id,{paid:+invoice.amount||0,status:"Paid"});
+  toast("Invoice marked as paid");await refresh();
+ }catch(e){toast("Unable to update invoice",true)}
+}
+async function approveExpense(id){
+ try{await editRecord("expenses",id,{status:"Approved"});toast("Expense approved");await refresh()}
+ catch(e){toast("Unable to approve expense",true)}
+}
+async function runPayroll(){
+ const active=cache.employees.filter(x=>x.status==="Active");
+ if(!active.length)return toast("No active employees found",true);
+ const period=new Date().toISOString().slice(0,7);
+ const existing=cache.payroll.filter(x=>x.period===period).map(x=>x.employee_id);
+ try{
+  await Promise.all(active.filter(x=>!existing.includes(x.id)).map(employee=>{
+   const basic=+employee.salary||0;
+   return addRecord("payroll",{employee_id:employee.id,period,basic,bonus:0,deductions:0,net:basic,status:"Pending"});
+  }));
+  toast(`Payroll generated for ${active.length-existing.length} employees`);await refresh();
+ }catch(e){toast("Unable to run payroll",true)}
+}
+function payslip(id){
+ const p=cache.payroll.find(x=>x.id===id);if(!p)return;
+ const employee=cache.employees.find(x=>x.id===p.employee_id);
+ $("#modalTitle").textContent="Payslip";
+ $("#formFields").innerHTML=`<div class="full card">
+  <div class="card-head">Acme ERP Pro — Payroll Statement</div>
+  <div class="card-body">
+   <h2>${esc(employee?.name||"Employee")}</h2>
+   <p>Employee ID: <span class="mono">${esc(employee?.employee_code||"—")}</span></p>
+   <p>Period: <span class="mono">${esc(p.period)}</span></p>
+   <table><tbody>
+    <tr><td>Basic Salary</td><td class="money">${money(p.basic)}</td></tr>
+    <tr><td>Bonus</td><td class="money">${money(p.bonus)}</td></tr>
+    <tr><td>Deductions</td><td class="money">${money(p.deductions)}</td></tr>
+    <tr><th>Net Pay</th><th class="money">${money(p.net)}</th></tr>
+   </tbody></table>
+  </div></div>`;
+ $("#recordForm .modal-foot").innerHTML=`<button type="button" onclick="window.print()">Print</button><button type="button" onclick="window.closeModal()">Close</button>`;
+ $("#modal").classList.add("show");
+}
+function wireFilters(){
+ const input=$(".filter");if(!input)return;
+ input.addEventListener("input",applyFilter);
+ $("#globalSearch").value="";
+}
+function applyFilter(){
+ const q=($(".filter")?.value||$("#globalSearch").value||"").toLowerCase();
+ $$("#dataTable tbody tr").forEach(row=>row.style.display=row.textContent.toLowerCase().includes(q)?"":"none");
+}
+function exportCSV(){
+ const table=$("#dataTable");if(!table)return toast("No table available",true);
+ const rows=[...table.rows].map(row=>[...row.cells].slice(0,-1).map(cell=>`"${cell.innerText.replaceAll('"','""')}"`).join(","));
+ const blob=new Blob([rows.join("\n")],{type:"text/csv"});
+ const link=document.createElement("a");link.href=URL.createObjectURL(blob);
+ link.download=`${current}-${new Date().toISOString().slice(0,10)}.csv`;link.click();
+ URL.revokeObjectURL(link.href);
+}
+async function refresh(){
+ await loadAll();route();
+}
+function destroyCharts(){charts.forEach(x=>x.destroy());charts=[]}
+function route(){
+ destroyCharts();
+ current=location.hash.slice(1)||"dashboard";
+ if(current!=="dashboard"&&!modules[current])current="dashboard";
+ $$(".nav a").forEach(a=>a.classList.toggle("active",a.dataset.route===current));
+ const label=current==="dashboard"?"Dashboard":modules[current].label;
+ $("#crumb").textContent=`Home › ${label}`;$("#routeStatus").textContent=label;
+ $("#recordCount").textContent=`${current==="dashboard"||current==="reports"?Object.values(cache).flat().length:(cache[current]?.length||0)} records`;
+ current==="dashboard"?dashboard():current==="reports"?reports():renderModule(current);
+}
+function logout(){sessionStorage.removeItem("acme-session");location.reload()}
+
+$("#recordForm").addEventListener("submit",saveRecord);
+$("#globalSearch").addEventListener("input",applyFilter);
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+$("#loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ if($("#username").value==="admin"&&$("#password").value==="admin123"){
+  sessionStorage.setItem("acme-session","1");$("#login").style.display="none";
+  $("#app").style.display="grid";await loadAll();route();
+ }else toast("Invalid username or password",true);
+});
+window.addEventListener("hashchange",route);
+setInterval(()=>$("#clock").textContent=new Date().toLocaleTimeString(),1000);
+
+Object.assign(window,{
+ openRecord,closeModal,removeRow,generateInvoice,markPaid,approveExpense,
+ runPayroll,payslip,applyFilter,exportCSV,logout
+});
+buildNav();
+if(sessionStorage.getItem("acme-session")){
+ $("#login").style.display="none";$("#app").style.display="grid";
+ loadAll().then(route);
+}
+</script>
+</body>
+</html>
