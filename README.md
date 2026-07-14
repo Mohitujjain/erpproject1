@@ -6,24 +6,37 @@ https://solid-goggles-6wg4w9wr9ww24pqj.github.dev/
 
 
 
-1
-Install Linux Wine (Fixes the .exe Error)
-Run this first in the Codespaces terminal to allow Linux to build Windows software.
 
-Copy
+1 Install Linux Wine (Fixes the .exe Error)
+--------------------------------------------
+
+* Run this first in the Codespaces terminal to allow Linux to build Windows software.
+
+Copy below code and paste it under terminal after html code :
+--------------------------------------------------------------
 sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install -y wine wine32 wine64
+
 Note: Combined into one line for easy copying! Just paste and press Enter. Wait 1-2 mins to finish.
+
 2
 Initialize NPM & Install Electron
+----------------------------------
 Setup the project and install the Electron builder engines.
 
-Copy
+Copy:
+------
 npm init -y && npm install electron --save-dev && npm install electron-builder --save-dev
+
+After 2nd line of code paste terminal you need to edit html code and replace // Your web app's Firebase configuration in code with your own credentials then enter 3rd step in terminal .
+Also need to create account if have not  .
+
 3
 Create main.js
+----------------
 Create a file named main.js and paste this code inside.
 
-Copy
+Copy:-
+-------
 const { app, BrowserWindow } = require('electron');
 
 function createWindow () {
@@ -50,10 +63,14 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
+
+Above all at it is just change or replace complete package.json file .
+
 4
 Replace package.json
+----------------------
 Delete everything inside package.json and paste this.
-
+-----------------------------------------------------
 Copy
 {
   "name": "vortexx-erp-system",
@@ -78,10 +95,19 @@ Copy
     "electron-builder": "^24.13.3"
   }
 }
+
+
 5
 Build the .exe File
+
 Run this final command to compile your Windows software.
 
-Copy
+Copy:-
+----------
+
+npm run build
+
+File will appear inside the dist folder!
+
 npm run build
 File will appear inside the dist folder!
