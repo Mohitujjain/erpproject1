@@ -107,7 +107,4 @@ Copy:-
 
 npm run build
 
-File will appear inside the dist folder!
-
-npm run build
-File will appear inside the dist folder!
+File will appear inside the dist folder
