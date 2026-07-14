@@ -103,11 +103,12 @@ Build the .exe File
 Run this final command to compile your Windows software.
 
 
-Use this for code source code : ##https://solid-goggles-6wg4w9wr9ww24pqj.github.dev/
-
 Copy:-
 ----------
 
 npm run build
 
 File will appear inside the dist folder
+
+
+Use this for code source code : ##https://solid-goggles-6wg4w9wr9ww24pqj.github.dev/##
